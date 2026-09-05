@@ -1,0 +1,20 @@
+# Third-party dependencies of ctvsdt and AOC-CBS.
+#
+# AOC-CBS's pyproject.toml declares no dependencies at all, so its half of this
+# list comes from reading its imports rather than from its metadata.
+#
+# Unpinned on purpose: this has to install on a laptop and on a cluster, where
+# numpy and scipy should come from the site's optimised build rather than from
+# PyPI. On Arrhenius that is what the SciPy bundle module provides, and
+# hpc/README.md gives the recipe.
+
+matplotlib
+networkx
+numpy
+plotly
+pyyaml
+scipy
+sortedcontainers
+
+# Tests.
+pytest

@@ -1,0 +1,6 @@
+[submodule "external/CBSH2-RTC"]
+	path = external/CBSH2-RTC
+	url = https://github.com/Jiaoyang-Li/CBSH2-RTC.git
+[submodule "external/AOC-CBS"]
+	path = external/AOC-CBS
+	url = https://github.com/Adcombrink/AOC-CBS.git

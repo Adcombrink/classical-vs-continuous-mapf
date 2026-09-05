@@ -1,0 +1,76 @@
+# The solver settings every reported run of this paper uses.
+#
+# This is the only solver settings file. Edit it, then run scripts/setup.sh,
+# which copies it into the AOC-CBS checkout as config/solver/solver.yaml --
+# the one place AOC-CBS resolves solver settings from, and a path with no
+# environment override.
+#
+# `timelimit` below is the per-instance budget. It is read from here rather
+# than passed on a command line, so changing the budget means editing this
+# file and running setup again. scripts/run_aoccbs_sweep.py --timeout does
+# not select a file; it asserts that this one says what you expect, so a run
+# cannot silently use a budget you did not intend.
+#
+# The portfolio length also sets the solver's worker count: with no cpu_workers
+# key the pool is max(len(find_solution_portfolio), len(raise_lb_portfolio)),
+# so a job running this file wants 4 cores. submit_map.sh reads that from here
+# rather than being told.
+#
+# The TPR sweep settings are deliberately absent: they are not YAML keys.
+# `tpr` in solver/aoccbs.py reads them from the environment, and
+# load_solver_config does SolverConfig(**data), so an unknown key here would
+# raise. scripts/run_aoccbs_sweep.py sets them before importing AOC-CBS:
+#
+#     AOCCBS_TPR_SWEEPS=3 AOCCBS_TPR_SWEEP_SET=all
+#
+# Those values were chosen per section 8 of the tpr_quality findings: 3
+# sweeps over all agents was the best arm tested, 9 cost more than they
+# returned, and AOCCBS_TPR_TRIES was not worth its planning cost.
+
+timelimit: 300.0             # seconds
+optimality_gap: 0.0         # upper bound on optimality gap
+delta_BR_gamma: 0.9         # delta-BR weighting factor
+objective_function: "SOC"
+warmup_workers: true        # true: spawn all workers during init (cost up front); false: spawn lazily on first use
+verbosity: "summary"
+
+"conflict_selection": "cardinal"
+"cardinal_best_of_n": 16
+
+#search_portfolio:
+#  - selection: "min objective"
+#    heuristics: ['TPR']
+#  - selection: "min nr collisions"
+#    heuristics: ['TPR']
+#  - selection: "min collision time"
+#    heuristics: ['TPR']
+#  - selection: "min objective"
+#    heuristics: ['TPR']
+
+# Optional: replace the static search_portfolio above with a gap-driven schedule that interleaves a
+# solution-finding portfolio with a lower-bound-raising one. The find-solution portfolio runs every
+# ceil(gap_scale / optimality_gap) iterations (every iteration while gap >= gap_scale or undefined),
+# the raise-lb portfolio otherwise; as the gap shrinks the solver shifts toward raising the lower bound.
+# When 'schedule' is present it takes precedence over 'search_portfolio'.
+
+schedule:
+  type: gap_cadence
+  gap_scale: 0.05
+  find_solution_portfolio:
+    - selection: "min objective"
+      heuristics: ['TPR']
+    - selection: "min objective"
+      heuristics: [ 'TPR' ]
+    - selection: "min collision time"
+      heuristics: ['TPR']
+    - selection: "min nr collisions"
+      heuristics: [ 'TPR' ]
+  raise_lb_portfolio:
+    - selection: "min objective"
+      heuristics: [ ]
+    - selection: "min objective"
+      heuristics: [ ]
+    - selection: "min objective"
+      heuristics: [ ]
+    - selection: "min objective"
+      heuristics: [ ]

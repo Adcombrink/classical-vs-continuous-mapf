@@ -1,0 +1,22 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+.DS_Store
+.idea/
+.vscode/
+
+.pytest_cache/
+.mypy_cache/
+
+# Build output of the CBSH2-RTC submodule.
+external/CBSH2-RTC/build/
+external/CBSH2-RTC/cbs
+
+# Scratch output that is not part of the record.
+scratch/
+
+# Generated during install; the project uses a conda env, not uv.
+uv.lock
